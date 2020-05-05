@@ -1,4 +1,5 @@
 var map;
+var infoWindow;
 var myLoc = {
     "lat": 0,
     "lng": 0
@@ -8,10 +9,8 @@ var queryLocation = {
     "lng": -0.712251
   };
 
-
-//40.714224,-73.961452
-//48.743271, 2.639777
-//48.839868, 2.354244
+//40.714224,-73.961452 NY
+//48.839868, 2.354244 paris
 //51.527105, -0.451082 england
 
 function initMap() {
@@ -32,15 +31,15 @@ function goLoc() {
 
 function locate(){
 
-  var infoWindow = new google.maps.InfoWindow;
-
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       myLoc.lat = position.coords.latitude;
       myLoc.lng = position.coords.longitude;
 
+      infoWindow = new google.maps.InfoWindow;
       infoWindow.setPosition(myLoc);
-      infoWindow.setContent('Location found. '+ myLoc.lat + ', '+myLoc.lng);
+
+      infoWindow.setContent('Location found. '+ myLoc.lat.toPrecision(6) + ' , '+myLoc.lng.toPrecision(6));
       infoWindow.open(map);
 
       map.zoom= 13;
@@ -60,15 +59,10 @@ function findDistance(){
   desired2 = ["postal_town"];
   desired3 = ["administrative_area_level_1", "political"];
 
-
   locationQuery = httpGet("https://maps.googleapis.com/maps/api/geocode/json?latlng="+myLoc.lat+", "+myLoc.lng+"&key=AIzaSyDkhX_9X-hkvRHITaw5XJjKhFBjNpfRUGw");
-  const results1 = JSON.parse(locationQuery);
+  results = JSON.parse(locationQuery);
 
-  console.log(results1["results"][0]["address_components"]);
-
-
-  list = results1["results"][0]["address_components"];
-
+  list = results["results"][0]["address_components"];
   longName = "";
   types = "";
   cont = true;
@@ -90,22 +84,18 @@ function findDistance(){
       types = list[index]["types"];
     }
   }
-  console.log(longName);
-  console.log(types);
 
   requestString = "https://maps.googleapis.com/maps/api/geocode/json?address="+ longName + "&key=AIzaSyDkhX_9X-hkvRHITaw5XJjKhFBjNpfRUGw";
   cityRequest = httpGet(requestString);
-  const results2 = JSON.parse(cityRequest);
+  results = JSON.parse(cityRequest);
 
-  console.log(results2["results"]);
 
-  list2 = results2["results"];
-  console.log(list2[0]);
+  list = results["results"];
 
-  for (index = 0; index < list2.length; index++) {
-    if(list2[index]["formatted_address"].includes(longName)){
-      queryLocation.lat = list2[index]["geometry"]["location"]["lat"];
-      queryLocation.lng = list2[index]["geometry"]["location"]["lng"];
+  for (index = 0; index < list.length; index++) {
+    if(list[index]["formatted_address"].includes(longName)){
+      queryLocation.lat = list[index]["geometry"]["location"]["lat"];
+      queryLocation.lng = list[index]["geometry"]["location"]["lng"];
     }
   }
 
@@ -119,15 +109,15 @@ function findElevation(){
   proxyURL = "https://cors-anywhere.herokuapp.com/"+url;
 
   elevationQuery = httpGet(proxyURL);
-  const json3 = elevationQuery;
-  const results3 = JSON.parse(json3);
+  results = JSON.parse(elevationQuery);
 
-  list = results3["results"];
+  list = results["results"];
   elevation = list[0]["elevation"];
 
   distanceToCenter = (6378137 + elevation) / 1000; //in Kilometers
-
   document.getElementById("Answer").innerHTML = "Distance to C.O.E. is " + distanceToCenter.toPrecision(7) + " kilometers";
+
+  return;
 }
 
 function httpGet(theUrl)
