@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Simple Map</title>
+<meta name="viewport" content="initial-scale=1.0">
+<meta charset="utf-8">
+<style>
+/* Always set the map height explicitly to define the size of the div
+ * element that contains the map. */
+#map {
+  height:400px;
+  width:100%;
+  position: absolute;
+}
+#A {
+  position: absolute;
+  right: 85vw;
+  top: 25vw;
+}
+
+#B {
+  position: absolute;
+  right: 55vw;
+  top: 27vw;
+}
+
+
+/* Optional: Makes the sample page fill the window. */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+</style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="container">
+
+  <div id="rest">
+    <div id="form">
+
+          <div id="A">
+            <h5> <span id="lat">Latitude</span></h5>
+            <input id="latInput" type="text" name="latInput" required>
+            <h5><span id="lng">Longitude</span></h5>
+            <input id="lngInput" type="text" name="lngInput" required>
+
+            <h5><span id="Answer">Output: </span></h5>
+          </div>
+
+
+          <div id="B">
+              <button onclick="goLoc()" id="GO" >GO</button>
+              <button onclick="locate()" id="LOCATE" >LOCATE ME</button>
+              <button onclick="findDistance()" id="DISTANCE" >FIND DISTANCE</button>
+              <button onclick="findElevation()" id="CENTER" >FIND DISTANCE TO C.O.E.</button>
+          </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script type="text/javascript" src="main.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDkhX_9X-hkvRHITaw5XJjKhFBjNpfRUGw&callback=initMap"
+async defer></script>
+</body>
+</html>
